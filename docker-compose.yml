@@ -1,0 +1,8 @@
+version: '3.9'
+
+services:
+  calculator:
+    build: .
+    ports:
+      - "11000:11000"
+    container_name: calculator-container
