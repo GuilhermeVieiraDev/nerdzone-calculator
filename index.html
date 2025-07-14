@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NerdZone Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .calculator {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            gap: 20px;
+            align-items: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            flex: 1;
+            min-width: 200px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 5px solid #4CAF50;
+            text-align: left;
+        }
+        .equipment-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .equipment-item {
+            flex: 1;
+            min-width: 120px;
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+            text-align: center;
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid #eee;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>NerdZone Calculator</h2>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="item">Item:</label>
+                <select id="item">
+                    <!-- Will be populated by JavaScript -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="marketValue">Valor da Bolsa (%):</label>
+                <input type="number" id="marketValue" min="-50" max="90" value="0">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="bonusBooster">Booster de Vendas (%):</label>
+                <input type="number" id="bonusBooster" min="0" max="100" value="0">
+            </div>
+            <div class="form-group">
+                <label for="skillBooster">Booster de Skill Mineração (%):</label>
+                <select id="skillBooster">
+                    <option value="0">0%</option>
+                    <option value="20">20%</option>
+		            <option value="30">30%</option>
+                    <option value="45">45%</option>
+                </select>
+            </div>
+        </div>
+
+        <hr>
+        <label>Bônus de Armadura:</label>
+        <div class="equipment-section">
+            <div class="equipment-item">
+                <label for="helmet">Capacete:</label>
+                <input type="number" id="helmet" min="1" max="3" step="0.1" value="1">
+            </div>
+            <div class="equipment-item">
+                <label for="chestplate">Peitoral:</label>
+                <input type="number" id="chestplate" min="1" max="3" step="0.1" value="1">
+            </div>
+            <div class="equipment-item">
+                <label for="leggings">Calça:</label>
+                <input type="number" id="leggings" min="1" max="3" step="0.1" value="1">
+            </div>
+            <div class="equipment-item">
+                <label for="boots">Bota:</label>
+                <input type="number" id="boots" min="1" max="3" step="0.1" value="1">
+            </div>
+        </div>
+
+        <hr>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="rank">Rank:</label>
+                <select id="rank">
+                    <!-- Will be populated by JavaScript -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantidade:</label>
+                <input type="number" id="quantity" min="1" value="1">
+            </div>
+        </div>
+
+        <div class="result" id="result">
+            Total: 0.00
+        </div>
+    </div>
+
+    <script>
+        // Sample items data (you will replace with your own JSON)
+        const itemsData = {
+            'fungo': { price: 9, type: 'crop' },
+            'abóbora': { price: 50, type: 'crop' },
+            'cana-de-açúcar': { price: 60, type: 'crop' },
+            'melancia': { price: 65, type: 'crop' },
+            'cacau': { price: 262, type: 'crop' },
+            'cenoura': { price: 1381, type: 'crop' },
+            'cacto': { price: 1740, type: 'crop' },
+
+            'lapis': { price: 0.5, type: 'ore' },
+            'esmeralda': { price: 18, type: 'ore' },
+            'quartzo': { price: 1000, type: 'ore' },
+            'obsidiana': { price: 1625, type: 'ore' },
+            'tnt': { price: 15000, type: 'ore' },
+            'bedrock': { price: 11000, type: 'ore' },
+        };
+
+        // Define rank names
+        const rankNames = ['Porco', 'Ovelha', 'Vaca', 'Galinha', 'Coelho', 'Jaguatirica', 'Lobo', 'Zumbi', 'Aranha', 'Esqueleto', 'Creeper', 'Guardian', 'Golem', 'Blaze', 'Slime'];
+
+        // Function to format large numbers to economy format
+        function toEconomy(value) {
+            if (value < 1e3) return value.toFixed(2);
+            if (value < 1e6) return `${(value / 1e3).toFixed(2)}K`;
+            if (value < 1e9) return `${(value / 1e6).toFixed(2)}M`;
+            if (value < 1e12) return `${(value / 1e9).toFixed(2)}B`;
+            if (value < 1e15) return `${(value / 1e12).toFixed(2)}T`;
+            if (value < 1e18) return `${(value / 1e15).toFixed(2)}Q`;
+            if (value < 1e21) return `${(value / 1e18).toFixed(2)}QQ`;
+            if (value < 1e24) return `${(value / 1e21).toFixed(2)}S`;
+            if (value < 1e27) return `${(value / 1e24).toFixed(2)}SS`;
+            if (value < 1e30) return `${(value / 1e27).toFixed(2)}OC`;
+            if (value < 1e33) return `${(value / 1e30).toFixed(2)}N`;
+            if (value < 1e36) return `${(value / 1e33).toFixed(2)}D`;
+            if (value < 1e39) return `${(value / 1e36).toFixed(2)}UN`;
+            if (value < 1e42) return `${(value / 1e39).toFixed(2)}DD`;
+            if (value < 1e45) return `${(value / 1e42).toFixed(2)}TR`;
+            if (value < 1e48) return `${(value / 1e45).toFixed(2)}QT`;
+            if (value < 1e51) return `${(value / 1e48).toFixed(2)}QN`;
+            if (value < 1e54) return `${(value / 1e51).toFixed(2)}SD`;
+            if (value < 1e57) return `${(value / 1e54).toFixed(2)}SPD`;
+            if (value < 1e60) return `${(value / 1e57).toFixed(2)}OD`;
+            if (value < 1e63) return `${(value / 1e60).toFixed(2)}ND`;
+            if (value < 1e66) return `${(value / 1e63).toFixed(2)}VG`;
+            if (value < 1e69) return `${(value / 1e66).toFixed(2)}UVG`;
+
+            return value.toString();
+        }
+
+        // Populate the items dropdown
+        function populateItems() {
+            const itemSelect = document.getElementById('item');
+            
+            // Add optgroup for crops
+            const cropsGroup = document.createElement('optgroup');
+            cropsGroup.label = "Plantação";
+            
+            // Add optgroup for ores
+            const oresGroup = document.createElement('optgroup');
+            oresGroup.label = "Mineração";
+            
+            // Sort items into appropriate groups
+            for (const [itemName, itemData] of Object.entries(itemsData)) {
+                const option = document.createElement('option');
+                option.value = itemName;
+                option.textContent = itemName.charAt(0).toUpperCase() + itemName.slice(1);
+                
+                if (itemData.type === 'crop') {
+                    cropsGroup.appendChild(option);
+                } else if (itemData.type === 'ore') {
+                    oresGroup.appendChild(option);
+                }
+            }
+            
+            // Add groups to select
+            itemSelect.appendChild(cropsGroup);
+            itemSelect.appendChild(oresGroup);
+        }
+
+        // Populate the ranks dropdown
+        function populateRanks() {
+            const rankSelect = document.getElementById('rank');
+            let i = 0;
+            for (const rankName of rankNames) {
+                for (let j = 0; j < 3; j++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `${rankName} ${'I'.repeat(j + 1)}`;
+                    rankSelect.appendChild(option);
+                    i++;
+                }
+            }
+        }
+
+        // Calculate the final price
+        function calculatePrice() {
+            // Get selected item and its base price/type
+            const selectedItem = document.getElementById('item').value;
+            const itemData = itemsData[selectedItem];
+            if (!itemData) return;
+            
+            const basePrice = itemData.price;
+            const itemType = itemData.type;
+            
+            // Get all modifiers
+            const marketValue = 1 + (parseInt(document.getElementById('marketValue').value) / 100);
+            const bonusBooster = 1 + (parseInt(document.getElementById('bonusBooster').value) / 100);
+            const skillBooster = 1 + (parseInt(document.getElementById('skillBooster').value) / 100);
+            
+            // Equipment modifiers
+            const helmet = parseFloat(document.getElementById('helmet').value);
+            const chestplate = parseFloat(document.getElementById('chestplate').value);
+            const leggings = parseFloat(document.getElementById('leggings').value);
+            const boots = parseFloat(document.getElementById('boots').value);
+            const equipmentMultiplier = helmet * chestplate * leggings * boots;
+            
+            // Rank
+            const rankIndex = parseInt(document.getElementById('rank').value);
+
+            if (rankIndex < 0 || rankIndex >= rankNames.length * 3) {
+                alert('Invalid rank selected.');
+                return;
+            }
+
+            let accumulatedMiningBonuses = 0;
+            let accumulatedFarmingBonuses = 0;
+
+            let baseMiningIncrease = 5;
+            let baseFarmingIncrease = 2;
+
+            for (let i = 0; i <= rankIndex; i++) {
+                if (i == 0) {
+                    accumulatedMiningBonuses = 0;
+                    accumulatedFarmingBonuses = 0;
+                    continue;
+                }
+
+                if (i % 9 == 0) {
+                    baseMiningIncrease++;
+                    baseFarmingIncrease++;
+                }
+
+                accumulatedMiningBonuses += baseMiningIncrease;
+                accumulatedFarmingBonuses += baseFarmingIncrease;
+            }
+
+            
+            // Get the appropriate bonus based on item type
+            const bonusPercentage = itemType === 'ore' 
+                ? accumulatedMiningBonuses
+                : accumulatedFarmingBonuses;
+            
+            const rankMultiplier = 1 + (bonusPercentage / 100);
+            
+            // Quantity
+            const quantity = parseInt(document.getElementById('quantity').value);
+            
+            // Calculate final price
+            const finalPrice = basePrice * marketValue * bonusBooster * skillBooster * 
+                              equipmentMultiplier * rankMultiplier * quantity;
+            
+            // Display the result with formatted number
+            document.getElementById('result').textContent = `Total: ${toEconomy(finalPrice)}`;
+        }
+
+        // Initialize the calculator
+        window.onload = function() {
+            populateItems();
+            populateRanks();
+            
+            // Set up event listeners for all inputs to recalculate on change
+            document.getElementById('item').addEventListener('change', calculatePrice);
+            document.getElementById('marketValue').addEventListener('input', calculatePrice);
+            document.getElementById('bonusBooster').addEventListener('input', calculatePrice);
+            document.getElementById('skillBooster').addEventListener('change', calculatePrice);
+            document.getElementById('helmet').addEventListener('input', calculatePrice);
+            document.getElementById('chestplate').addEventListener('input', calculatePrice);
+            document.getElementById('leggings').addEventListener('input', calculatePrice);
+            document.getElementById('boots').addEventListener('input', calculatePrice);
+            document.getElementById('rank').addEventListener('change', calculatePrice);
+            document.getElementById('quantity').addEventListener('input', calculatePrice);
+            
+            // Calculate initial price
+            calculatePrice();
+        };
+    </script>
+</body>
+</html>
