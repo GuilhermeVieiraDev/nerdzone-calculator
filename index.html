@@ -70,6 +70,44 @@
             border-left: 5px solid #4CAF50;
             text-align: left;
         }
+        .item-count {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: normal;
+            color: #666;
+            text-align: right;
+            font-style: italic;
+        }
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .toggle.active {
+            background-color: #4CAF50;
+        }
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .toggle.active .toggle-slider {
+            transform: translateX(26px);
+        }
         .equipment-section {
             display: flex;
             flex-wrap: wrap;
@@ -166,13 +204,39 @@
             </div>
         </div>
 
+        <hr>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Itens Compactados:</label>
+                <div class="toggle-container">
+                    <span>Normal</span>
+                    <div class="toggle" id="compactedToggle">
+                        <div class="toggle-slider"></div>
+                    </div>
+                    <span>Compactado (x64)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="storageType">Tipo de Armazenamento:</label>
+                <select id="storageType">
+                    <option value="item">Item</option>
+                    <option value="inventory">Inventário (2304 itens)</option>
+                    <option value="normal_chest">Baú Normal (1728 itens)</option>
+                    <option value="double_chest">Baú Duplo (3456 itens)</option>
+                </select>
+            </div>
+        </div>
+
         <div class="result" id="result">
             Total: 0.00
+        </div>
+        <div class="item-count" id="itemCount">
+            
         </div>
     </div>
 
     <script>
-        // Sample items data (you will replace with your own JSON)
+        // Sample items data
         const itemsData = {
             'Abóbora': { price: 20, type: 'crop' },
 
@@ -188,7 +252,7 @@
 
         // Function to format large numbers to economy format
         function toEconomy(value) {
-            if (value < 1e3) return value.toFixed(2);
+            if (value < 1e3) return value;
             if (value < 1e6) return `${(value / 1e3).toFixed(2)}K`;
             if (value < 1e9) return `${(value / 1e6).toFixed(2)}M`;
             if (value < 1e12) return `${(value / 1e9).toFixed(2)}B`;
@@ -324,23 +388,55 @@
             
             const rankMultiplier = 1 + (bonusPercentage / 100);
             
-            // Quantity
-            const quantity = parseInt(document.getElementById('quantity').value);
+            // Quantity and compacted items
+            let quantity = parseInt(document.getElementById('quantity').value);
+            const isCompacted = document.getElementById('compactedToggle').classList.contains('active');
+            
+            if (isCompacted) quantity *= 64;
+            
+            // Storage type calculation
+            const storageType = document.getElementById('storageType').value;
+            let storageMultiplier = 1;
+            
+            switch (storageType) {
+                case 'inventory':
+                    storageMultiplier = 2304; // 36 slots × 64 items per slot
+                    break;
+                case 'normal_chest':
+                    storageMultiplier = 1728; // 27 slots × 64 items per slot
+                    break;
+                case 'double_chest':
+                    storageMultiplier = 3456; // 54 slots × 64 items per slot
+                    break;
+                default:
+                    storageMultiplier = 1;
+            }
+            
+            const finalQuantity = quantity * storageMultiplier;
             
             // Calculate final price
             const finalPrice = basePrice * marketValue * bonusBooster * skillBooster * 
-                              equipmentMultiplier * rankMultiplier * quantity;
+                              equipmentMultiplier * rankMultiplier * finalQuantity;
 
             const finalValue = isFinite(finalPrice) ? toEconomy(finalPrice) : '???';
             
-            // Display the result with formatted number
+            // Display the result and item count separately
             document.getElementById('result').textContent = `Total: ${finalValue}`;
+            
+            // Display the item count
+            document.getElementById('itemCount').textContent = `${toEconomy(finalQuantity)} itens calculados`;
         }
 
         // Initialize the calculator
         window.onload = function() {
             populateItems();
             populateRanks();
+            
+            // Set up toggle functionality
+            document.getElementById('compactedToggle').addEventListener('click', function() {
+                this.classList.toggle('active');
+                calculatePrice();
+            });
             
             // Set up event listeners for all inputs to recalculate on change
             document.getElementById('item').addEventListener('change', calculatePrice);
@@ -354,6 +450,7 @@
             document.getElementById('boots').addEventListener('input', calculatePrice);
             document.getElementById('rank').addEventListener('change', calculatePrice);
             document.getElementById('quantity').addEventListener('input', calculatePrice);
+            document.getElementById('storageType').addEventListener('change', calculatePrice);
             
             // Calculate initial price
             calculatePrice();
