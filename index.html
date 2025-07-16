@@ -271,7 +271,7 @@
             const itemType = itemData.type;
             
             // Get all modifiers
-            const marketValue = 1 + (parseInt(document.getElementById('marketValue').value) / 100);
+            const marketValue = 1 + (parseFloat(document.getElementById('marketValue').value) / 100);
             const bonusBooster = 1 + (parseInt(document.getElementById('bonusBooster').value) / 100);
             
             // Get the appropriate skill booster based on item type
