@@ -1,282 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR" class=""> 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NerdZone Calculator</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {}
+            }
+        }
+    </script>
+    
     <style>
-        :root {
-            --bg-color: #f0f0f0;
-            --card-bg: #fff;
-            --text-color: #333;
-            --border-color: #ccc;
-            --input-bg: #fff;
-            --result-bg: #f8f9fa;
-            --shadow: rgba(0, 0, 0, 0.1);
-            --muted-text: #666;
-        }
-        
-        [data-theme="dark"] {
-            --bg-color: #1a1a1a;
-            --card-bg: #2d2d2d;
-            --text-color: #e0e0e0;
-            --border-color: #555;
-            --input-bg: #3a3a3a;
-            --result-bg: #333;
-            --shadow: rgba(0, 0, 0, 0.3);
-            --muted-text: #aaa;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .calculator {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px var(--shadow);
-            width: 100%;
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-            gap: 20px;
-            align-items: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-            flex: 1;
-            min-width: 200px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-        select, input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            box-sizing: border-box;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 15px;
-            background-color: var(--result-bg);
-            border-radius: 4px;
-            border-left: 5px solid #4CAF50;
-            text-align: left;
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .item-count {
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: normal;
-            color: var(--muted-text);
-            text-align: right;
-            font-style: italic;
-            transition: color 0.3s;
-        }
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .toggle {
-            position: relative;
-            width: 50px;
-            height: 24px;
-            background-color: #ccc;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
         .toggle.active {
-            background-color: #4CAF50;
-        }
-        .toggle-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
+           background-color: #dc2626; /* Cor: red-600 do Tailwind */
         }
         .toggle.active .toggle-slider {
-            transform: translateX(26px);
-        }
-        .equipment-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .equipment-item {
-            flex: 1;
-            min-width: 120px;
-        }
-        h2 {
-            color: var(--text-color);
-            margin-top: 0;
-            text-align: center;
-            margin-bottom: 20px;
-            transition: color 0.3s;
-        }
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            width: 45px;
-            height: 45px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            transition: all 0.3s;
-            background-color: var(--card-bg);
-            z-index: 1000;
-        }
-        .theme-toggle:hover {
-            background-color: var(--result-bg);
-            transform: scale(1.05);
-        }
-        hr {
-            border: 0;
-            border-top: 1px solid var(--border-color);
-            margin: 20px 0;
-            transition: border-color 0.3s;
+           transform: translateX(1.25rem); /* 20px */
         }
     </style>
 </head>
-<body>
-    <button class="theme-toggle" id="themeToggle" title="Toggle theme">🌙</button>
-    <div class="calculator">
-        <h2>NerdZone Calculator</h2>
+<body class="bg-slate-200 dark:bg-slate-900 flex items-center justify-center min-h-screen p-4 font-sans transition-colors duration-300">
+
+    <button class="theme-toggle fixed top-4 right-4 z-50 flex h-12 w-12 cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white text-2xl shadow-sm transition-all duration-300 hover:scale-105 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700" id="themeToggle" title="Alternar tema">
+        🌙
+    </button>
+
+    <div class="calculator w-full max-w-4xl rounded-xl bg-slate-50 p-6 shadow-lg transition-colors duration-300 sm:p-8 dark:bg-slate-800">
         
-        <div class="form-row">
+        <h2 class="mb-8 text-center text-3xl font-bold text-red-600 dark:text-red-500">NerdZone Calculator</h2>
+        
+        <div class="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-3">
             <div class="form-group">
-                <label for="item">Item:</label>
-                <select id="item">
-                    <!-- Will be populated by JavaScript -->
+                <label for="item" class="mb-2 inline-block rounded-md bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-slate-300">Item:</label>
+                <select id="item" class="block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 dark:focus:border-red-500 dark:focus:ring-red-500">
                 </select>
             </div>
             <div class="form-group">
-                <label for="marketValue">Valor da Bolsa (%):</label>
-                <input type="number" id="marketValue" min="-50" max="90" value="0">
+                <label for="marketValue" class="mb-2 inline-block rounded-md bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-slate-300">Valor da Bolsa (%):</label>
+                <input type="number" id="marketValue" min="-50" max="90" value="0" class="block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 dark:focus:border-red-500 dark:focus:ring-red-500">
             </div>
             <div class="form-group">
-                <label for="bonusBooster">Booster de Vendas (x):</label>
-                <input type="number" id="bonusBooster" min="0" max="100" value="0">
+                <label for="bonusBooster" class="mb-2 inline-block rounded-md bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-slate-300">Booster de Vendas (x):</label>
+                <input type="number" id="bonusBooster" min="0" max="100" value="0" class="block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 dark:focus:border-red-500 dark:focus:ring-red-500">
             </div>
         </div>
 
-        <hr>
-        <!-- <label>Bônus de Skill:</label> -->
-        <div class="form-row">
+        <hr class="my-6 border-t border-slate-300 dark:border-slate-700">
+
+        <div class="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
             <div class="form-group">
-                <label for="miningSkillBooster">Bônus de Skill Mineração (%):</label>
-                <select id="miningSkillBooster">
+                <label for="miningSkillBooster" class="mb-2 inline-block rounded-md bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-slate-300">Bônus de Skill Mineração (%):</label>
+                <select id="miningSkillBooster" class="block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-red-500 dark:focus:ring-red-500">
                     <option value="0">0%</option>
                     <option value="10">10%</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="herbalismSkillBooster">Bônus de Skill Herbalismo (%):</label>
-                <select id="herbalismSkillBooster">
+                <label for="herbalismSkillBooster" class="mb-2 inline-block rounded-md bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-slate-300">Bônus de Skill Herbalismo (%):</label>
+                <select id="herbalismSkillBooster" class="block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-red-500 dark:focus:ring-red-500">
                     <option value="0">0%</option>
                 </select>
             </div>
         </div>
 
-        <hr>
-        <label>Bônus de Armadura:</label>
-        <div class="equipment-section">
-            <div class="equipment-item">
-                <label for="helmet">Capacete:</label>
-                <input type="number" id="helmet" min="1" max="3" step="0.1" value="1">
-            </div>
-            <div class="equipment-item">
-                <label for="chestplate">Peitoral:</label>
-                <input type="number" id="chestplate" min="1" max="3" step="0.1" value="1">
-            </div>
-            <div class="equipment-item">
-                <label for="leggings">Calça:</label>
-                <input type="number" id="leggings" min="1" max="3" step="0.1" value="1">
-            </div>
-            <div class="equipment-item">
-                <label for="boots">Bota:</label>
-                <input type="number" id="boots" min="1" max="3" step="0.1" value="1">
+        <hr class="my-6 border-t border-slate-300 dark:border-slate-700">
+
+        <div>
+            <label class="mb-2 inline-block rounded-md bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-slate-300">Bônus de Armadura:</label>
+            <div class="equipment-section mt-2 grid grid-cols-2 gap-4 md:grid-cols-4">
+                <div class="equipment-item">
+                    <label for="helmet" class="block text-xs font-medium text-slate-600 dark:text-slate-400">Capacete:</label>
+                    <input type="number" id="helmet" min="1" max="3" step="0.1" value="1" class="mt-1 block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 dark:focus:border-red-500 dark:focus:ring-red-500">
+                </div>
+                <div class="equipment-item">
+                    <label for="chestplate" class="block text-xs font-medium text-slate-600 dark:text-slate-400">Peitoral:</label>
+                    <input type="number" id="chestplate" min="1" max="3" step="0.1" value="1" class="mt-1 block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 dark:focus:border-red-500 dark:focus:ring-red-500">
+                </div>
+                <div class="equipment-item">
+                    <label for="leggings" class="block text-xs font-medium text-slate-600 dark:text-slate-400">Calça:</label>
+                    <input type="number" id="leggings" min="1" max="3" step="0.1" value="1" class="mt-1 block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 dark:focus:border-red-500 dark:focus:ring-red-500">
+                </div>
+                <div class="equipment-item">
+                    <label for="boots" class="block text-xs font-medium text-slate-600 dark:text-slate-400">Bota:</label>
+                    <input type="number" id="boots" min="1" max="3" step="0.1" value="1" class="mt-1 block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 dark:focus:border-red-500 dark:focus:ring-red-500">
+                </div>
             </div>
         </div>
 
-        <hr>
-        <div class="form-row">
+        <hr class="my-6 border-t border-slate-300 dark:border-slate-700">
+
+        <div class="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
             <div class="form-group">
-                <label for="rank">Rank:</label>
-                <select id="rank">
-                    <!-- Will be populated by JavaScript -->
+                <label for="rank" class="mb-2 inline-block rounded-md bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-slate-300">Rank:</label>
+                <select id="rank" class="block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-red-500 dark:focus:ring-red-500">
                 </select>
             </div>
             <div class="form-group">
-                <label for="quantity">Quantidade:</label>
-                <input type="number" id="quantity" min="1" value="1">
+                <label for="quantity" class="mb-2 inline-block rounded-md bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-slate-300">Quantidade:</label>
+                <input type="number" id="quantity" min="1" value="1" class="block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 dark:focus:border-red-500 dark:focus:ring-red-500">
             </div>
         </div>
-
-        <hr>
-        <div class="form-row">
+        
+        <hr class="my-6 border-t border-slate-300 dark:border-slate-700">
+        
+        <div class="grid grid-cols-1 items-center gap-x-6 gap-y-5 md:grid-cols-2">
             <div class="form-group">
-                <label>Itens Compactados:</label>
-                <div class="toggle-container">
+                <label class="mb-2 inline-block rounded-md bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-slate-300">Itens Compactados:</label>
+                <div class="toggle-container flex items-center space-x-3 text-sm text-slate-600 dark:text-slate-400">
                     <span>Normal</span>
-                    <div class="toggle" id="compactedToggle">
-                        <div class="toggle-slider"></div>
+                    <div class="toggle relative inline-flex h-6 w-11 cursor-pointer rounded-full bg-slate-300 transition-colors duration-200 ease-in-out dark:bg-slate-600" id="compactedToggle">
+                        <div class="toggle-slider pointer-events-none absolute left-0.5 top-0.5 inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></div>
                     </div>
                     <span>Compactado (x64)</span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="storageType">Tipo de Armazenamento:</label>
-                <select id="storageType">
+                <label for="storageType" class="mb-2 inline-block rounded-md bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-slate-300">Tipo de Armazenamento:</label>
+                <select id="storageType" class="block w-full rounded-md border-slate-300 bg-white p-2.5 text-slate-900 shadow-sm transition duration-150 ease-in-out focus:border-red-500 focus:ring-red-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-red-500 dark:focus:ring-red-500">
                     <option value="item">Item</option>
                     <option value="inventory">Inventário (2304 itens)</option>
                     <option value="normal_chest">Baú Normal (1728 itens)</option>
@@ -285,258 +130,15 @@
             </div>
         </div>
 
-        <div class="result" id="result">
+        <div class="result mt-8 rounded-lg border-l-4 border-red-500 bg-slate-200 p-4 text-left text-2xl font-bold text-slate-900 dark:bg-slate-900/50 dark:text-white" id="result">
             Total: 0.00
         </div>
-        <div class="item-count" id="itemCount">
-            
+        <div class="item-count mt-2 text-right text-sm italic text-slate-500 dark:text-slate-400" id="itemCount">
         </div>
     </div>
 
     <script>
-        // Sample items data
-        const itemsData = {
-            'Abóbora': { price: 20, type: 'crop' },
-
-            'Carvão': { price: 0.3, type: 'ore' },
-            'Lápis Lazuli': { price: 0.5, type: 'ore' },
-            'Redstone': { price: 2.1, type: 'ore' },
-            'Esmeralda': { price: Infinity, type: 'ore' },
-            'Obsidiana': { price: 27, type: 'ore' },
-        };
-
-        // Define rank names
-        const rankNames = ['Carvão', 'Lápis', 'Redstone', 'Ouro', 'Esmeralda', 'Diamante'];
-
-        // Function to format large numbers to economy format
-        function toEconomy(value) {
-            if (value < 1e3) return value;
-            if (value < 1e6) return `${(value / 1e3).toFixed(2)}K`;
-            if (value < 1e9) return `${(value / 1e6).toFixed(2)}M`;
-            if (value < 1e12) return `${(value / 1e9).toFixed(2)}B`;
-            if (value < 1e15) return `${(value / 1e12).toFixed(2)}T`;
-            if (value < 1e18) return `${(value / 1e15).toFixed(2)}Q`;
-            if (value < 1e21) return `${(value / 1e18).toFixed(2)}QQ`;
-            if (value < 1e24) return `${(value / 1e21).toFixed(2)}S`;
-            if (value < 1e27) return `${(value / 1e24).toFixed(2)}SS`;
-            if (value < 1e30) return `${(value / 1e27).toFixed(2)}OC`;
-            if (value < 1e33) return `${(value / 1e30).toFixed(2)}N`;
-            if (value < 1e36) return `${(value / 1e33).toFixed(2)}D`;
-            if (value < 1e39) return `${(value / 1e36).toFixed(2)}UN`;
-            if (value < 1e42) return `${(value / 1e39).toFixed(2)}DD`;
-            if (value < 1e45) return `${(value / 1e42).toFixed(2)}TR`;
-            if (value < 1e48) return `${(value / 1e45).toFixed(2)}QT`;
-            if (value < 1e51) return `${(value / 1e48).toFixed(2)}QN`;
-            if (value < 1e54) return `${(value / 1e51).toFixed(2)}SD`;
-            if (value < 1e57) return `${(value / 1e54).toFixed(2)}SPD`;
-            if (value < 1e60) return `${(value / 1e57).toFixed(2)}OD`;
-            if (value < 1e63) return `${(value / 1e60).toFixed(2)}ND`;
-            if (value < 1e66) return `${(value / 1e63).toFixed(2)}VG`;
-            if (value < 1e69) return `${(value / 1e66).toFixed(2)}UVG`;
-
-            return value.toString();
-        }
-
-        // Populate the items dropdown
-        function populateItems() {
-            const itemSelect = document.getElementById('item');
-            
-            // Add optgroup for crops
-            const cropsGroup = document.createElement('optgroup');
-            cropsGroup.label = "Plantação";
-            
-            // Add optgroup for ores
-            const oresGroup = document.createElement('optgroup');
-            oresGroup.label = "Mineração";
-            
-            // Sort items into appropriate groups
-            for (const [itemName, itemData] of Object.entries(itemsData)) {
-                const option = document.createElement('option');
-                option.value = itemName;
-                option.textContent = itemName.charAt(0).toUpperCase() + itemName.slice(1);
-                
-                if (itemData.type === 'crop') {
-                    cropsGroup.appendChild(option);
-                } else if (itemData.type === 'ore') {
-                    oresGroup.appendChild(option);
-                }
-            }
-            
-            // Add groups to select
-            itemSelect.appendChild(cropsGroup);
-            itemSelect.appendChild(oresGroup);
-        }
-
-        // Populate the ranks dropdown
-        function populateRanks() {
-            const rankSelect = document.getElementById('rank');
-            let i = 0;
-            for (const rankName of rankNames) {
-                for (let j = 0; j < 3; j++) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.textContent = `${rankName} ${'I'.repeat(j + 1)}`;
-                    rankSelect.appendChild(option);
-                    i++;
-                }
-            }
-        }
-
-        // Calculate the final price
-        function calculatePrice() {
-            // Get selected item and its base price/type
-            const selectedItem = document.getElementById('item').value;
-            const itemData = itemsData[selectedItem];
-            if (!itemData) return;
-            
-            const basePrice = itemData.price;
-            const itemType = itemData.type;
-            
-            // Get all modifiers
-            const marketValue = 1 + (parseFloat(document.getElementById('marketValue').value) / 100);
-            const bonusBooster = parseFloat(document.getElementById('bonusBooster').value);
-            
-            // Get the appropriate skill booster based on item type
-            const miningSkillBooster = 1 + (parseInt(document.getElementById('miningSkillBooster').value) / 100);
-            const herbalismSkillBooster = 1 + (parseInt(document.getElementById('herbalismSkillBooster').value) / 100);
-            const skillBooster = itemType === 'ore' ? miningSkillBooster : herbalismSkillBooster;
-            
-            // Equipment modifiers
-            const helmet = parseFloat(document.getElementById('helmet').value);
-            const chestplate = parseFloat(document.getElementById('chestplate').value);
-            const leggings = parseFloat(document.getElementById('leggings').value);
-            const boots = parseFloat(document.getElementById('boots').value);
-            const equipmentMultiplier = helmet * chestplate * leggings * boots;
-            
-            // Rank
-            const rankIndex = parseInt(document.getElementById('rank').value);
-
-            if (rankIndex < 0 || rankIndex >= rankNames.length * 3) {
-                alert('Invalid rank selected.');
-                return;
-            }
-
-            let accumulatedMiningBonuses = 0;
-            let accumulatedFarmingBonuses = 0;
-
-            let baseMiningIncrease = 10;
-            let baseFarmingIncrease = 10;
-
-            for (let i = 0; i <= rankIndex; i++) {
-                if (i == 0) {
-                    accumulatedMiningBonuses = 0;
-                    accumulatedFarmingBonuses = 0;
-                    continue;
-                }
-
-                if (i % 9 == 0) {
-                    baseMiningIncrease++;
-                    baseFarmingIncrease++;
-                }
-
-                accumulatedMiningBonuses += baseMiningIncrease;
-                accumulatedFarmingBonuses += baseFarmingIncrease;
-            }
-
-            
-            // Get the appropriate bonus based on item type
-            const bonusPercentage = itemType === 'ore' 
-                ? accumulatedMiningBonuses
-                : accumulatedFarmingBonuses;
-            
-            const rankMultiplier = 1 + (bonusPercentage / 100);
-            
-            // Quantity and compacted items
-            let quantity = parseInt(document.getElementById('quantity').value);
-            const isCompacted = document.getElementById('compactedToggle').classList.contains('active');
-            
-            if (isCompacted) quantity *= 64;
-            
-            // Storage type calculation
-            const storageType = document.getElementById('storageType').value;
-            let storageMultiplier = 1;
-            
-            switch (storageType) {
-                case 'inventory':
-                    storageMultiplier = 2304; // 36 slots × 64 items per slot
-                    break;
-                case 'normal_chest':
-                    storageMultiplier = 1728; // 27 slots × 64 items per slot
-                    break;
-                case 'double_chest':
-                    storageMultiplier = 3456; // 54 slots × 64 items per slot
-                    break;
-                default:
-                    storageMultiplier = 1;
-            }
-            
-            const finalQuantity = quantity * storageMultiplier;
-            
-            // Calculate final price
-            const finalPrice = basePrice * marketValue * bonusBooster * skillBooster * 
-                              equipmentMultiplier * rankMultiplier * finalQuantity;
-
-            const finalValue = isFinite(finalPrice) ? toEconomy(finalPrice) : '???';
-            
-            // Display the result and item count separately
-            document.getElementById('result').textContent = `Total: ${finalValue}`;
-            
-            // Display the item count
-            document.getElementById('itemCount').textContent = `${toEconomy(finalQuantity)} itens calculados`;
-        }
-
-        // Initialize the calculator
-        window.onload = function() {
-            populateItems();
-            populateRanks();
-            
-            // Set up toggle functionality
-            document.getElementById('compactedToggle').addEventListener('click', function() {
-                this.classList.toggle('active');
-                calculatePrice();
-            });
-            
-            // Set up theme toggle
-            const themeToggle = document.getElementById('themeToggle');
-            const body = document.body;
-            
-            // Check for saved theme preference or default to light
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            if (savedTheme === 'dark') {
-                body.setAttribute('data-theme', 'dark');
-                themeToggle.textContent = '☀️';
-            }
-            
-            themeToggle.addEventListener('click', function() {
-                const currentTheme = body.getAttribute('data-theme');
-                if (currentTheme === 'dark') {
-                    body.removeAttribute('data-theme');
-                    themeToggle.textContent = '🌙';
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    body.setAttribute('data-theme', 'dark');
-                    themeToggle.textContent = '☀️';
-                    localStorage.setItem('theme', 'dark');
-                }
-            });
-            
-            // Set up event listeners for all inputs to recalculate on change
-            document.getElementById('item').addEventListener('change', calculatePrice);
-            document.getElementById('marketValue').addEventListener('input', calculatePrice);
-            document.getElementById('bonusBooster').addEventListener('input', calculatePrice);
-            document.getElementById('miningSkillBooster').addEventListener('change', calculatePrice);
-            document.getElementById('herbalismSkillBooster').addEventListener('change', calculatePrice);
-            document.getElementById('helmet').addEventListener('input', calculatePrice);
-            document.getElementById('chestplate').addEventListener('input', calculatePrice);
-            document.getElementById('leggings').addEventListener('input', calculatePrice);
-            document.getElementById('boots').addEventListener('input', calculatePrice);
-            document.getElementById('rank').addEventListener('change', calculatePrice);
-            document.getElementById('quantity').addEventListener('input', calculatePrice);
-            document.getElementById('storageType').addEventListener('change', calculatePrice);
-            
-            // Calculate initial price
-            calculatePrice();
-        };
+        const itemsData={Abóbora:{price:20,type:"crop"},Carvão:{price:.3,type:"ore"},"Lápis Lazuli":{price:.5,type:"ore"},Redstone:{price:2.1,type:"ore"},Esmeralda:{price:1/0,type:"ore"},Obsidiana:{price:27,type:"ore"}},rankNames=["Carvão","Lápis","Redstone","Ouro","Esmeralda","Diamante"];function toEconomy(e){return e<1e3?e.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}):e<1e6?`${(e/1e3).toFixed(2)}K`:e<1e9?`${(e/1e6).toFixed(2)}M`:e<1e12?`${(e/1e9).toFixed(2)}B`:e<1e15?`${(e/1e12).toFixed(2)}T`:e<1e18?`${(e/1e15).toFixed(2)}Q`:e.toExponential(2)}function toEconomyItens(e){return e<1e3?e.toLocaleString("pt-BR"):e<1e6?`${(e/1e3).toFixed(2)}K`:e<1e9?`${(e/1e6).toFixed(2)}M`:e<1e12?`${(e/1e9).toFixed(2)}B`:e<1e15?`${(e/1e12).toFixed(2)}T`:e<1e18?`${(e/1e15).toFixed(2)}Q`:e.toExponential(2)}function populateItems(){const e=document.getElementById("item"),t=document.createElement("optgroup");t.label="Plantação";const a=document.createElement("optgroup");a.label="Mineração";for(const[o,n]of Object.entries(itemsData)){const c=document.createElement("option");c.value=o,c.textContent=o.charAt(0).toUpperCase()+o.slice(1),"crop"===n.type?t.appendChild(c):"ore"===n.type&&a.appendChild(c)}e.appendChild(t),e.appendChild(a)}function populateRanks(){const e=document.getElementById("rank");let t=0;for(const a of rankNames)for(let o=0;o<3;o++){const n=document.createElement("option");n.value=t,n.textContent=`${a} ${"I".repeat(o+1)}`,e.appendChild(n),t++}}function calculatePrice(){const e=document.getElementById("item").value,t=itemsData[e];if(!t)return;const a=t.price,o=t.type,n=1+parseFloat(document.getElementById("marketValue").value)/100,c=parseFloat(document.getElementById("bonusBooster").value)||1,l=1+parseInt(document.getElementById("miningSkillBooster").value)/100,r=1+parseInt(document.getElementById("herbalismSkillBooster").value)/100,d=parseFloat(document.getElementById("helmet").value)*parseFloat(document.getElementById("chestplate").value)*parseFloat(document.getElementById("leggings").value)*parseFloat(document.getElementById("boots").value),s=parseInt(document.getElementById("rank").value);if(s<0||s>=3*rankNames.length)return;let i=0,m=0,u=10,p=10;for(let e=0;e<=s;e++){if(0==e)continue;e%9==0&&(u++,p++),i+=u,m+=p}const g=1+(("ore"===o?i:m)/100);let k=parseInt(document.getElementById("quantity").value);document.getElementById("compactedToggle").classList.contains("active")&&(k*=64);const h=document.getElementById("storageType").value;let f=1;switch(h){case"inventory":f=2304;break;case"normal_chest":f=1728;break;case"double_chest":f=3456}const b=k*f,v=a*n*c*("ore"===o?l:r)*d*g*b,E=isFinite(v)?toEconomy(v):"???";document.getElementById("result").textContent=`Total: $${E}`,document.getElementById("itemCount").textContent=`${toEconomyItens(b)} itens calculados`}window.onload=function(){populateItems(),populateRanks(),document.getElementById("compactedToggle").addEventListener("click",function(){this.classList.toggle("active"),calculatePrice()});const e=document.getElementById("themeToggle"),t=document.documentElement,a=localStorage.getItem("theme")||"light";"dark"===a?(t.classList.add("dark"),e.textContent="☀️"):(t.classList.remove("dark"),e.textContent="🌙"),e.addEventListener("click",function(){t.classList.contains("dark")?(t.classList.remove("dark"),e.textContent="🌙",localStorage.setItem("theme","light")):(t.classList.add("dark"),e.textContent="☀️",localStorage.setItem("theme","dark"))});const o=["item","marketValue","bonusBooster","miningSkillBooster","herbalismSkillBooster","helmet","chestplate","leggings","boots","rank","quantity","storageType"];o.forEach(e=>{const t=document.getElementById(e),a="SELECT"===t.tagName?"change":"input";t.addEventListener(a,calculatePrice)}),calculatePrice()};
     </script>
 </body>
 </html>
