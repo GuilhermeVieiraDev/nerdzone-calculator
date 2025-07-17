@@ -204,7 +204,7 @@
                 <input type="number" id="marketValue" min="-50" max="90" value="0">
             </div>
             <div class="form-group">
-                <label for="bonusBooster">Booster de Vendas (%):</label>
+                <label for="bonusBooster">Booster de Vendas (x):</label>
                 <input type="number" id="bonusBooster" min="0" max="100" value="0">
             </div>
         </div>
@@ -394,7 +394,7 @@
             
             // Get all modifiers
             const marketValue = 1 + (parseFloat(document.getElementById('marketValue').value) / 100);
-            const bonusBooster = 1 + (parseInt(document.getElementById('bonusBooster').value) / 100);
+            const bonusBooster = parseFloat(document.getElementById('bonusBooster').value);
             
             // Get the appropriate skill booster based on item type
             const miningSkillBooster = 1 + (parseInt(document.getElementById('miningSkillBooster').value) / 100);
